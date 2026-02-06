@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 export default function Sidebar({ user = {} }) {
   const pathname = usePathname();
   
-  // Mock modules for now - in real app, derive from user.company.modules
+  // Mock modules
   const modules = {
     accounting: true,
     inventory: false,
@@ -17,15 +17,18 @@ export default function Sidebar({ user = {} }) {
 
   const navItems = [
     { name: 'Dashboard', href: '/dashboard' },
+    
+    // Core Modules
     ...(modules.accounting ? [
       { name: 'Accounting', href: '/accounting', subItems: [
-        { name: 'Chart of Accounts', href: '/accounting/chart-of-accounts' },
-        { name: 'Journal Entries', href: '/accounting/journal-entries' },
-        { name: 'Invoices', href: '/invoices' },
+        { name: 'Journal Entries', href: '/accounting?tab=journals' },
+        { name: 'Chart of Accounts', href: '/accounting?tab=coa' },
+        { name: 'Trial Balance', href: '/accounting?tab=reports' },
+        { name: 'Invoices', href: '/invoices' }, // Keep separate for easier access
         { name: 'Payments', href: '/payments' },
-        { name: 'Trial Balance', href: '/accounting/trial-balance' },
       ]}
     ] : []),
+
     { name: 'Settings', href: '/settings', subItems: [
         { name: 'Modules', href: '/settings/modules' },
         { name: 'Company Info', href: '/settings/company' }

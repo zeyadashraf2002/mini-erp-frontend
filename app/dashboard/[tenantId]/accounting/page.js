@@ -1,15 +1,34 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 
 export default function AccountingPage() {
-  const [activeTab, setActiveTab] = useState('journals');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  // Default to journals if no tab specified
+  const initialTab = searchParams.get('tab') || 'journals';
+  const [activeTab, setActiveTab] = useState(initialTab);
+  
   const [accounts, setAccounts] = useState([]);
   const [journals, setJournals] = useState([]);
   const [trialBalance, setTrialBalance] = useState([]);
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Sync state with URL when URL changes
+  useEffect(() => {
+      const tab = searchParams.get('tab');
+      if (tab) setActiveTab(tab);
+  }, [searchParams]);
+
+  // Sync URL when state changes (only if initiated by user click on internal tabs)
+  const handleTabChange = (tab) => {
+      setActiveTab(tab);
+      router.push(`?tab=${tab}`, { scroll: false });
+  }
 
   // Derived State (Search/Filter)
   const filteredAccounts = accounts
@@ -149,29 +168,34 @@ export default function AccountingPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8 print:hidden">
+      {/* Header removed as per user request */}
+      {/* <div className="flex items-center justify-between mb-8 print:hidden">
          <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Financial Accounting</h1>
          <div className="text-sm text-slate-500">Manage your company financials</div>
-      </div>
+      </div> */}
       
-      {/* Tabs */}
-      <div className="flex gap-1 mb-8 bg-slate-100 p-1 rounded-lg w-fit print:hidden">
+      {/* Tabs removed as per user request */}
+      {/* <div className="flex gap-2 mb-8 bg-slate-200/50 p-1.5 rounded-xl w-fit print:hidden">
         {['journals', 'coa', 'reports'].map(tab => (
           <button 
             key={tab}
-            className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all duration-200 capitalize ${
+            className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 capitalize flex items-center gap-2 ${
                 activeTab === tab 
-                ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200' 
-                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+                ? 'bg-white text-indigo-600 shadow-md ring-1 ring-slate-200/50' 
+                : 'text-slate-500 hover:text-slate-900 hover:bg-white/50'
             }`}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => handleTabChange(tab)}
           >
+            {tab === 'journals' && <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>}
+            {tab === 'coa' && <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2" /></svg>}
+            {tab === 'reports' && <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 2v-6m-8 13h11a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>}
             {tab === 'coa' ? 'Chart of Accounts' : tab === 'journals' ? 'Journal Entries' : 'Reports'}
           </button>
         ))}
-      </div>
+      </div> */}
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px] print:shadow-none print:border-0">
+
+      <div className="bg-transparent overflow-hidden min-h-[500px] print:shadow-none print:border-0">
         {loading && (
              <div className="p-12 text-center text-slate-500 flex flex-col items-center">
                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>

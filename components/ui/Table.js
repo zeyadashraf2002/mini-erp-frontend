@@ -1,10 +1,10 @@
 import React from 'react';
 
 const Table = React.forwardRef(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  <div className="relative w-full overflow-auto rounded-xl border border-slate-100 bg-white shadow-sm">
     <table
       ref={ref}
-      className={`w-full caption-bottom text-sm ${className}`}
+      className={`w-full text-sm border-collapse ${className}`}
       {...props}
     />
   </div>
@@ -12,14 +12,14 @@ const Table = React.forwardRef(({ className, ...props }, ref) => (
 Table.displayName = "Table"
 
 const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
-  <thead ref={ref} className={`[&_tr]:border-b ${className}`} {...props} />
+  <thead ref={ref} className={`bg-slate-50/50 border-b border-slate-100 ${className}`} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
 
 const TableBody = React.forwardRef(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={`[&_tr:last-child]:border-0 ${className}`}
+    className={`divide-y divide-slate-50 ${className}`}
     {...props}
   />
 ))
@@ -28,7 +28,7 @@ TableBody.displayName = "TableBody"
 const TableFooter = React.forwardRef(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={`border-t bg-slate-100/50 font-medium [&>tr]:last:border-b-0 ${className}`}
+    className={`border-t border-slate-100 bg-slate-50/50 font-medium ${className}`}
     {...props}
   />
 ))
@@ -37,7 +37,7 @@ TableFooter.displayName = "TableFooter"
 const TableRow = React.forwardRef(({ className, ...props }, ref) => (
   <tr
     ref={ref}
-    className={`border-b transition-colors hover:bg-slate-100/50 data-[state=selected]:bg-slate-100 ${className}`}
+    className={`transition-all duration-200 hover:bg-indigo-50/30 ${className}`}
     {...props}
   />
 ))
@@ -46,7 +46,7 @@ TableRow.displayName = "TableRow"
 const TableHead = React.forwardRef(({ className, ...props }, ref) => (
   <th
     ref={ref}
-    className={`h-12 px-4 text-left align-middle font-medium text-slate-500 [&:has([role=checkbox])]:pr-0 ${className}`}
+    className={`h-11 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-500 ${className}`}
     {...props}
   />
 ))
@@ -55,7 +55,7 @@ TableHead.displayName = "TableHead"
 const TableCell = React.forwardRef(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${className}`}
+    className={`p-4 align-middle text-slate-600 ${className}`}
     {...props}
   />
 ))
