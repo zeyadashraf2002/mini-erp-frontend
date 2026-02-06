@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -27,6 +27,7 @@ export default function PaymentsPage() {
     }, [token]);
 
     const fetchPayments = async () => {
+        setLoading(true);
         try {
             const res = await api.get('/payments', token);
             setPayments(res.data);
@@ -46,6 +47,10 @@ export default function PaymentsPage() {
             console.error(error); 
         }
     }
+
+    // Memoize the lists to prevent unnecessary re-renders
+    const memoizedPayments = useMemo(() => payments, [payments]);
+    const memoizedInvoices = useMemo(() => invoices, [invoices]);
 
     return (
         <div className="space-y-6">
@@ -77,11 +82,18 @@ export default function PaymentsPage() {
                                 </TableHeader>
                                 <TableBody>
                                     {loading ? (
-                                        <TableRow><TableCell colSpan={4} className="text-center py-8">Loading...</TableCell></TableRow>
+                                        [1, 2, 3, 4, 5].map(i => (
+                                            <TableRow key={i}>
+                                                <TableCell><div className="h-4 w-20 bg-slate-200 animate-pulse rounded" /></TableCell>
+                                                <TableCell><div className="h-4 w-32 bg-slate-200 animate-pulse rounded" /></TableCell>
+                                                <TableCell><div className="h-4 w-24 bg-slate-200 animate-pulse rounded" /></TableCell>
+                                                <TableCell className="text-right"><div className="h-4 w-16 bg-slate-200 animate-pulse rounded ml-auto" /></TableCell>
+                                            </TableRow>
+                                        ))
                                     ) : payments.length === 0 ? (
                                         <TableRow><TableCell colSpan={4} className="text-center py-8">No payments recorded.</TableCell></TableRow>
                                     ) : (
-                                        payments.map(pay => (
+                                        memoizedPayments.map(pay => (
                                             <TableRow key={pay.id}>
                                                 <TableCell>{new Date(pay.date).toLocaleDateString()}</TableCell>
                                                 <TableCell>{pay.invoice ? pay.invoice.invoiceNumber : '-'}</TableCell>
@@ -97,11 +109,27 @@ export default function PaymentsPage() {
                         {/* Mobile Cards */}
                         <div className="md:hidden space-y-4">
                             {loading ? (
-                                <div className="text-center py-8 text-slate-500">Loading...</div>
+                                <div className="space-y-4">
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className="bg-white p-4 rounded-lg shadow-sm border border-slate-200 animate-pulse">
+                                            <div className="flex justify-between items-start mb-3 border-b border-slate-50 pb-2">
+                                                <div className="space-y-2">
+                                                    <div className="h-4 w-20 bg-slate-100 rounded" />
+                                                    <div className="h-3 w-28 bg-slate-50 rounded" />
+                                                </div>
+                                                <div className="h-5 w-12 bg-slate-100 rounded-full" />
+                                            </div>
+                                            <div className="flex justify-between items-center text-sm">
+                                                <div className="h-3 w-24 bg-slate-50 rounded" />
+                                                <div className="h-4 w-16 bg-slate-100 rounded" />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             ) : payments.length === 0 ? (
                                 <div className="text-center py-8 text-slate-500">No payments recorded.</div>
                             ) : (
-                                payments.map(pay => (
+                                memoizedPayments.map(pay => (
                                     <div key={pay.id} className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
                                         <div className="flex justify-between items-start mb-3 border-b border-slate-50 pb-2">
                                             <div>
@@ -153,7 +181,7 @@ function CreatePaymentForm({ token, invoices, onSuccess }) {
     };
 
     return (
-        <Card className="max-w-2xl mx-auto">
+        <Card className="max-w-3xl mx-auto">
             <CardHeader>
                 <CardTitle>Record Payment</CardTitle>
             </CardHeader>
@@ -167,7 +195,7 @@ function CreatePaymentForm({ token, invoices, onSuccess }) {
                          <label className="text-sm font-medium text-slate-700">Select Invoice</label>
                          <select name="invoiceId" className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-950" required>
                              <option value="">-- Select Pending Invoice --</option>
-                             {invoices.map(inv => (
+                             {memoizedInvoices.map(inv => (
                                  <option key={inv.id} value={inv.id}>
                                      {inv.invoiceNumber} - {inv.customerName} (${inv.amount})
                                  </option>

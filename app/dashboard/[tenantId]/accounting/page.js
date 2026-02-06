@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
@@ -31,20 +31,24 @@ function AccountingContent() {
       router.push(`?tab=${tab}`, { scroll: false });
   }
 
-  // Derived State (Search/Filter)
-  const filteredAccounts = accounts
-    .filter(acc => 
-      acc.code.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      acc.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => a.code.localeCompare(b.code)); // Ensure sorted
+  // Derived State (Search/Filter) - Memoized for performance
+  const filteredAccounts = useMemo(() => {
+    return accounts
+      .filter(acc => 
+        acc.code.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        acc.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .sort((a, b) => a.code.localeCompare(b.code));
+  }, [accounts, searchTerm]);
 
-  const filteredTrialBalance = trialBalance
-    .filter(row => 
-       row.code.toLowerCase().includes(searchTerm.toLowerCase()) || 
-       row.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => a.code.localeCompare(b.code));
+  const filteredTrialBalance = useMemo(() => {
+    return trialBalance
+      .filter(row => 
+         row.code.toLowerCase().includes(searchTerm.toLowerCase()) || 
+         row.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .sort((a, b) => a.code.localeCompare(b.code));
+  }, [trialBalance, searchTerm]);
 
   // Forms
   const [journalForm, setJournalForm] = useState({  
@@ -176,7 +180,7 @@ function AccountingContent() {
   const isBalanced = Math.abs(debitTotal - creditTotal) <= 0.01;
 
   return (
-    <div>
+    <div className="w-full">
       {/* Header removed as per user request */}
       {/* <div className="flex items-center justify-between mb-8 print:hidden">
          <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Financial Accounting</h1>
@@ -206,9 +210,19 @@ function AccountingContent() {
 
       <div className="bg-transparent overflow-hidden min-h-[500px] print:shadow-none print:border-0">
         {loading && (
-             <div className="p-12 text-center text-slate-500 flex flex-col items-center">
-                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
-                 Loading data...
+             <div className="p-6 md:p-12">
+                 <div className="space-y-4 max-w-4xl mx-auto">
+                     <div className="h-8 w-48 bg-slate-200 animate-pulse rounded-lg mb-8"></div>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                         <div className="h-12 bg-slate-100 animate-pulse rounded-xl"></div>
+                         <div className="h-12 bg-slate-100 animate-pulse rounded-xl"></div>
+                     </div>
+                     <div className="space-y-3">
+                         {[1, 2, 3, 4, 5].map(i => (
+                             <div key={i} className="h-16 bg-slate-50 animate-pulse rounded-xl border border-slate-100"></div>
+                         ))}
+                     </div>
+                 </div>
              </div>
         )}
         
@@ -316,7 +330,7 @@ function AccountingContent() {
         {!loading && activeTab === 'journals' && (
           <div className="p-6">
             <h2 className="text-xl font-bold text-slate-800 mb-6">New General Journal</h2>
-             <form onSubmit={handlePostJournal} className="max-w-4xl">
+             <form onSubmit={handlePostJournal} className="max-w-5xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
@@ -328,21 +342,24 @@ function AccountingContent() {
                     </div>
                 </div>
                 
-                <div className="mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
-                    <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <span>Transaction Lines</span>
-                        <span className="text-xs font-normal text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">{journalForm.lines.length} items</span>
+                <div className="mb-8 p-4 md:p-6 bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+                    <h3 className="font-bold text-slate-700 mb-6 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <span>Transaction Lines</span>
+                            <span className="text-xs font-normal text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">{journalForm.lines.length} items</span>
+                        </div>
                     </h3>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         {journalForm.lines.map((line, idx) => (
-                            <div key={idx} className="flex flex-col md:flex-row gap-4 items-start group bg-white p-3 md:p-0 rounded-lg border md:border-0 border-slate-200 shadow-sm md:shadow-none">
-                                <div className="flex-1 w-full">
-                                    <label className="block md:hidden text-xs font-semibold text-slate-500 mb-1">Account</label>
+                            <div key={idx} className="relative flex flex-col md:flex-row gap-4 items-start bg-white p-4 md:p-0 rounded-xl border md:border-0 border-slate-200 shadow-sm md:shadow-none transition-all hover:border-slate-300">
+                                {/* Desktop/Mobile Unified Row with Labels */}
+                                <div className="flex-1 w-full space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Account</label>
                                     <select 
                                         value={line.accountId} 
                                         onChange={e => handleLineChange(idx, 'accountId', e.target.value)} 
-                                        className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white outline-none text-slate-900 text-sm" 
+                                        className="w-full p-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:border-indigo-500 outline-none text-slate-900 text-sm transition-all" 
                                         required
                                     >
                                         <option value="">Select Account...</option>
@@ -353,43 +370,54 @@ function AccountingContent() {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="flex gap-4 w-full md:w-auto">
-                                    <div className="w-32">
-                                         <label className="block md:hidden text-xs font-semibold text-slate-500 mb-1">Type</label>
+
+                                <div className="flex gap-3 w-full md:w-auto">
+                                    <div className="flex-1 md:w-32 space-y-1">
+                                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Type</label>
                                          <select
                                             value={line.type}
                                             onChange={e => handleLineChange(idx, 'type', e.target.value)}
-                                            className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white outline-none text-slate-900 text-sm font-medium"
+                                            className="w-full p-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:border-indigo-500 outline-none text-slate-900 text-sm font-medium transition-all"
                                          >
                                             <option value="DEBIT">Debit</option>
                                             <option value="CREDIT">Credit</option>
                                          </select>
                                     </div>
-                                    <div className="flex-1 md:w-40 relative">
-                                        <label className="block md:hidden text-xs font-semibold text-slate-500 mb-1">Amount</label>
-                                        <span className="absolute left-3 top-8 md:top-2.5 text-slate-400 text-sm">$</span>
-                                        <input 
-                                            type="number" 
-                                            placeholder="0.00" 
-                                            value={line.amount === 0 ? '' : line.amount} 
-                                            onFocus={(e) => e.target.select()}
-                                            onChange={e => handleLineChange(idx, 'amount', e.target.value)} 
-                                            className="w-full pl-7 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-right font-mono text-sm text-slate-900 placeholder:text-slate-300 bg-white" 
-                                        />
+                                    <div className="flex-1 md:w-44 space-y-1 relative">
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Amount</label>
+                                        <div className="relative">
+                                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+                                            <input 
+                                                type="number" 
+                                                placeholder="0.00" 
+                                                value={line.amount === 0 ? '' : line.amount} 
+                                                onFocus={(e) => e.target.select()}
+                                                onChange={e => handleLineChange(idx, 'amount', e.target.value)} 
+                                                className="w-full pl-8 p-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:border-indigo-500 outline-none text-right font-mono text-sm text-slate-900 placeholder:text-slate-300 transition-all" 
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                <button type="button" onClick={() => {
-                                    const ks = [...journalForm.lines];
-                                    ks.splice(idx, 1);
-                                    setJournalForm({...journalForm, lines: ks});
-                                }} className="text-slate-400 hover:text-red-500 p-2">
-                                    ✕
+
+                                <button 
+                                    type="button" 
+                                    onClick={() => {
+                                        const ks = [...journalForm.lines];
+                                        ks.splice(idx, 1);
+                                        setJournalForm({...journalForm, lines: ks});
+                                    }} 
+                                    className="absolute -top-2 -right-2 md:static md:mt-8 p-1.5 bg-red-50 md:bg-transparent text-red-400 hover:text-red-600 hover:bg-red-100 md:hover:bg-slate-100 rounded-full transition-all border border-red-100 md:border-0"
+                                    title="Remove line"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
                                 </button>
                             </div>
                         ))}
                     </div>
-                    <button type="button" onClick={handleAddLine} className="mt-4 text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                    <button type="button" onClick={handleAddLine} className="mt-8 px-4 py-2.5 text-sm font-bold text-indigo-600 hover:text-white bg-indigo-50 hover:bg-indigo-600 rounded-xl flex items-center gap-2 transition-all w-full md:w-auto justify-center border border-indigo-100 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                         Add Line Item
                     </button>
                 </div>
