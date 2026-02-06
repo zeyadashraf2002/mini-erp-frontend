@@ -2,6 +2,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
+import { toast } from 'sonner';
 
 function AccountingContent() {
   const searchParams = useSearchParams();
@@ -96,7 +97,7 @@ function AccountingContent() {
       setAccountForm({ code: '', name: '', type: 'ASSET' });
       fetchAccounts();
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -114,7 +115,7 @@ function AccountingContent() {
       e.preventDefault();
       // Strict Validation
       if (journalForm.lines.length < 2) {
-        alert("A Journal Entry must have at least 2 lines.");
+        toast.error("A Journal Entry must have at least 2 lines.");
         return;
       }
       
@@ -127,7 +128,7 @@ function AccountingContent() {
         .reduce((s, l) => s + Number(l.amount || 0), 0);
 
       if (Math.abs(debitTotal - creditTotal) > 0.01) {
-          alert(`Journal Entry is unbalanced!\nDebit: ${debitTotal.toFixed(2)}\nCredit: ${creditTotal.toFixed(2)}`);
+          toast.error(`Journal Entry is unbalanced!\nDebit: ${debitTotal.toFixed(2)}\nCredit: ${creditTotal.toFixed(2)}`);
           return;
       }
 
@@ -143,7 +144,7 @@ function AccountingContent() {
             }))
           };
           await api.post('/accounting/journals', payload, token);
-          alert('Journal Posted Successfully!');
+          toast.success('Journal Posted Successfully!');
           setJournalForm({ 
             description: '', 
             date: new Date().toISOString().split('T')[0], 
@@ -154,7 +155,7 @@ function AccountingContent() {
           });
       } catch (err) {
           console.error(err);
-          alert('Failed to post journal: ' + err.message);
+          toast.error('Failed to post journal: ' + err.message);
       }
   }
 

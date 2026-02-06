@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -10,12 +11,10 @@ import Input from '@/components/ui/Input';
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
     
     const formData = new FormData(e.target);
     const email = formData.get('email');
@@ -44,7 +43,7 @@ export default function LoginPage() {
       router.push(`/dashboard/${companyId}`);
       
     } catch (err) {
-      setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -58,11 +57,6 @@ export default function LoginPage() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="grid gap-4">
-          {error && (
-            <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
-              {error}
-            </div>
-          )}
           <div className="grid gap-2">
             <Input 
               label="Email" 
