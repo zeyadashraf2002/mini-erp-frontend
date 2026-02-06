@@ -61,34 +61,66 @@ export default function PaymentsPage() {
                     fetchPayments();
                 }} />
             ) : (
-                <Card className="border-none shadow-xl shadow-slate-200/50">
+                <Card className="border-none shadow-xl shadow-slate-200/50 bg-transparent md:bg-white">
                     <CardContent className="p-0">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Invoice Linked</TableHead>
-                                    <TableHead>Method</TableHead>
-                                    <TableHead className="text-right">Amount</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {loading ? (
-                                    <TableRow><TableCell colSpan={4} className="text-center py-8">Loading...</TableCell></TableRow>
-                                ) : payments.length === 0 ? (
-                                    <TableRow><TableCell colSpan={4} className="text-center py-8">No payments recorded.</TableCell></TableRow>
-                                ) : (
-                                    payments.map(pay => (
-                                        <TableRow key={pay.id}>
-                                            <TableCell>{new Date(pay.date).toLocaleDateString()}</TableCell>
-                                            <TableCell>{pay.invoice ? pay.invoice.invoiceNumber : '-'}</TableCell>
-                                            <TableCell>{pay.method || '-'}</TableCell>
-                                            <TableCell className="text-right">{pay.amount}</TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
+                        {/* Desktop Table */}
+                        <div className="hidden md:block">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Date</TableHead>
+                                        <TableHead>Invoice Linked</TableHead>
+                                        <TableHead>Method</TableHead>
+                                        <TableHead className="text-right">Amount</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {loading ? (
+                                        <TableRow><TableCell colSpan={4} className="text-center py-8">Loading...</TableCell></TableRow>
+                                    ) : payments.length === 0 ? (
+                                        <TableRow><TableCell colSpan={4} className="text-center py-8">No payments recorded.</TableCell></TableRow>
+                                    ) : (
+                                        payments.map(pay => (
+                                            <TableRow key={pay.id}>
+                                                <TableCell>{new Date(pay.date).toLocaleDateString()}</TableCell>
+                                                <TableCell>{pay.invoice ? pay.invoice.invoiceNumber : '-'}</TableCell>
+                                                <TableCell>{pay.method || '-'}</TableCell>
+                                                <TableCell className="text-right">{pay.amount}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
+
+                        {/* Mobile Cards */}
+                        <div className="md:hidden space-y-4">
+                            {loading ? (
+                                <div className="text-center py-8 text-slate-500">Loading...</div>
+                            ) : payments.length === 0 ? (
+                                <div className="text-center py-8 text-slate-500">No payments recorded.</div>
+                            ) : (
+                                payments.map(pay => (
+                                    <div key={pay.id} className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                                        <div className="flex justify-between items-start mb-3 border-b border-slate-50 pb-2">
+                                            <div>
+                                                <div className="text-sm font-bold text-slate-900">{new Date(pay.date).toLocaleDateString()}</div>
+                                                <div className="text-xs text-slate-500">
+                                                    {pay.invoice ? `Inv: ${pay.invoice.invoiceNumber}` : 'No Invoice'}
+                                                </div>
+                                            </div>
+                                            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
+                                                Paid
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm">
+                                            <div className="text-slate-600">{pay.method || 'Unknown Method'}</div>
+                                            <div className="font-mono font-bold text-slate-800">${Number(pay.amount).toFixed(2)}</div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
             )}

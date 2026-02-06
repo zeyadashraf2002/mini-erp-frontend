@@ -240,7 +240,8 @@ function AccountingContent() {
                 />
             </div>
 
-            <div className="overflow-x-auto rounded-lg border border-slate-200">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto rounded-lg border border-slate-200">
                 <table className="w-full text-left bg-white min-w-[600px]">
                 <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
@@ -271,6 +272,33 @@ function AccountingContent() {
                     )}
                 </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden space-y-4">
+                {filteredAccounts.map(acc => (
+                    <div key={acc.id} className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                        <div className="flex justify-between items-start mb-2">
+                            <div>
+                                <span className="font-mono text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded mr-2">{acc.code}</span>
+                                <span className="font-bold text-slate-800">{acc.name}</span>
+                            </div>
+                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                ${acc.type === 'ASSET' ? 'bg-green-100 text-green-800' : 
+                                  acc.type === 'LIABILITY' ? 'bg-red-100 text-red-800' :
+                                  acc.type === 'EQUITY' ? 'bg-blue-100 text-blue-800' :
+                                  acc.type === 'REVENUE' ? 'bg-indigo-100 text-indigo-800' : 'bg-orange-100 text-orange-800'
+                                }`}>
+                                {acc.type}
+                            </span>
+                        </div>
+                    </div>
+                ))}
+                {filteredAccounts.length === 0 && (
+                    <div className="p-8 text-center text-slate-400 italic bg-slate-50 rounded-lg border border-dashed border-slate-300">
+                        No accounts found.
+                    </div>
+                )}
             </div>
           </div>
         )}
@@ -408,7 +436,7 @@ function AccountingContent() {
                     </div>
                  </div>
                  
-                 <div className="overflow-x-auto border border-slate-200 rounded-lg print:border-0 print:overflow-visible">
+                 <div className="hidden md:block overflow-x-auto border border-slate-200 rounded-lg print:border-0 print:overflow-visible">
                     <table className="w-full text-left min-w-[600px] print:min-w-0">
                     <thead>
                         <tr className="bg-slate-50 border-b border-slate-200 print:bg-white print:border-black">
@@ -443,6 +471,36 @@ function AccountingContent() {
                         </tr>
                     </tbody>
                     </table>
+                 </div>
+
+                 {/* Mobile Cards for Trial Balance */}
+                 <div className="md:hidden space-y-4 print:hidden">
+                    {filteredTrialBalance.map(row => (
+                        <div key={row.accountId} className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                            <div className="flex justify-between items-start mb-3 pb-3 border-b border-slate-50">
+                                <div>
+                                    <span className="font-mono text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded mr-2">{row.code}</span>
+                                    <span className="font-bold text-slate-800">{row.name}</span>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <div className="text-xs text-slate-500 uppercase">Debit</div>
+                                    <div className="font-mono text-slate-700">{Number(row.debit).toFixed(2)}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-slate-500 uppercase">Credit</div>
+                                    <div className="font-mono text-slate-700">{Number(row.credit).toFixed(2)}</div>
+                                </div>
+                                <div className="col-span-2 pt-2 border-t border-slate-50 flex justify-between items-center">
+                                    <div className="text-xs text-slate-500 uppercase font-bold">Net Balance</div>
+                                    <div className={`font-mono font-bold ${Number(row.net) < 0 ? 'text-red-500' : 'text-slate-800'}`}>
+                                        {Number(row.net).toFixed(2)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                  </div>
              </div>
         )}
