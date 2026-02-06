@@ -62,7 +62,7 @@ export default function PaymentsPage() {
             </div>
 
             {showCreate ? (
-                <CreatePaymentForm token={token} invoices={invoices} onSuccess={() => {
+                <CreatePaymentForm token={token} invoices={memoizedInvoices} onSuccess={() => {
                     setShowCreate(false);
                     fetchPayments();
                 }} />
@@ -160,16 +160,32 @@ export default function PaymentsPage() {
 function CreatePaymentForm({ token, invoices, onSuccess }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [selectedInvoiceId, setSelectedInvoiceId] = useState('');
+
+    const selectedInvoice = useMemo(() => 
+        invoices.find(inv => inv.id === selectedInvoiceId),
+    [invoices, selectedInvoiceId]);
+
+    const remainingBalance = useMemo(() => {
+        if (!selectedInvoice) return 0;
+        const totalPaid = (selectedInvoice.payments || []).reduce((sum, p) => sum + Number(p.amount), 0);
+        return Number(selectedInvoice.amount) - totalPaid;
+    }, [selectedInvoice]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         setError('');
         
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
         data.amount = Number(data.amount);
 
+        if (data.amount > remainingBalance + 0.01) {
+            setError(`Payment amount exceeds remaining balance ($${remainingBalance.toFixed(2)})`);
+            return;
+        }
+
+        setLoading(true);
         try {
             await api.post('/payments', data, token);
             onSuccess();
@@ -193,13 +209,22 @@ function CreatePaymentForm({ token, invoices, onSuccess }) {
                     
                     <div className="grid gap-2">
                          <label className="text-sm font-medium text-slate-700">Select Invoice</label>
-                         <select name="invoiceId" className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-950" required>
+                         <select 
+                            name="invoiceId" 
+                            value={selectedInvoiceId}
+                            onChange={(e) => setSelectedInvoiceId(e.target.value)}
+                            className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-950" 
+                            required
+                         >
                              <option value="">-- Select Pending Invoice --</option>
-                             {memoizedInvoices.map(inv => (
-                                 <option key={inv.id} value={inv.id}>
-                                     {inv.invoiceNumber} - {inv.customerName} (${inv.amount})
-                                 </option>
-                             ))}
+                             {invoices.map(inv => {
+                                 const balance = Number(inv.amount) - (inv.payments || []).reduce((s, p) => s + Number(p.amount), 0);
+                                 return (
+                                     <option key={inv.id} value={inv.id}>
+                                         {inv.invoiceNumber} - {inv.customerName} (Bal: ${balance.toFixed(2)})
+                                     </option>
+                                 );
+                             })}
                          </select>
                     </div>
 
@@ -208,7 +233,22 @@ function CreatePaymentForm({ token, invoices, onSuccess }) {
                         <Input label="Payment Method" name="method" placeholder="Bank Transfer, Cash..." />
                     </div>
                     
-                    <Input label="Amount Received" name="amount" type="number" step="0.01" min="0" required />
+                    <div className="grid gap-2">
+                        <Input 
+                            label={`Amount Received ${selectedInvoice ? `(Remaining: $${remainingBalance.toFixed(2)})` : ''}`} 
+                            name="amount" 
+                            type="number" 
+                            step="0.01" 
+                            min="0" 
+                            max={remainingBalance}
+                            required 
+                        />
+                        {selectedInvoice && (
+                            <div className="text-[11px] text-slate-500 px-1 font-medium italic">
+                                Original Amount: ${Number(selectedInvoice.amount).toFixed(2)}
+                            </div>
+                        )}
+                    </div>
                 </CardContent>
                 <div className="p-6 pt-4 flex justify-end">
                     <Button type="submit" isLoading={loading}>Record Payment</Button>
