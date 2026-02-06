@@ -1,82 +1,78 @@
 import React from 'react';
 
-const Table = React.forwardRef(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto rounded-xl border border-slate-100 bg-white shadow-sm">
-    <table
-      ref={ref}
-      className={`w-full text-sm border-collapse ${className}`}
+const Table = ({ children, className = '', ...props }) => {
+  return (
+    <div className="w-full overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-soft">
+      <table className={`w-full border-collapse ${className}`} {...props}>
+        {children}
+      </table>
+    </div>
+  );
+};
+
+const TableHeader = ({ children, className = '', ...props }) => {
+  return (
+    <thead className={`bg-gray-50 border-b border-gray-100 ${className}`} {...props}>
+      {children}
+    </thead>
+  );
+};
+
+const TableBody = ({ children, className = '', ...props }) => {
+  return (
+    <tbody className={`divide-y divide-gray-100 ${className}`} {...props}>
+      {children}
+    </tbody>
+  );
+};
+
+const TableFooter = ({ children, className = '', ...props }) => {
+  return (
+    <tfoot className={`bg-gray-50 border-t border-gray-200 ${className}`} {...props}>
+      {children}
+    </tfoot>
+  );
+};
+
+const TableRow = ({ children, className = '', hover = true, ...props }) => {
+  const hoverClass = hover ? 'hover:bg-gray-50 transition-smooth' : '';
+  return (
+    <tr className={`${hoverClass} ${className}`} {...props}>
+      {children}
+    </tr>
+  );
+};
+
+const TableHead = ({ children, className = '', ...props }) => {
+  return (
+    <th 
+      className={`px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider ${className}`} 
       {...props}
-    />
-  </div>
-))
-Table.displayName = "Table"
+    >
+      {children}
+    </th>
+  );
+};
 
-const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
-  <thead ref={ref} className={`bg-slate-50/50 border-b border-slate-100 ${className}`} {...props} />
-))
-TableHeader.displayName = "TableHeader"
+const TableCell = ({ children, className = '', ...props }) => {
+  return (
+    <td 
+      className={`px-6 py-4 text-sm text-gray-900 ${className}`} 
+      {...props}
+    >
+      {children}
+    </td>
+  );
+};
 
-const TableBody = React.forwardRef(({ className, ...props }, ref) => (
-  <tbody
-    ref={ref}
-    className={`divide-y divide-slate-50 ${className}`}
-    {...props}
-  />
-))
-TableBody.displayName = "TableBody"
+// Attach sub-components to Table
+Table.Header = TableHeader;
+Table.Body = TableBody;
+Table.Footer = TableFooter;
+Table.Row = TableRow;
+Table.Head = TableHead;
+Table.Cell = TableCell;
 
-const TableFooter = React.forwardRef(({ className, ...props }, ref) => (
-  <tfoot
-    ref={ref}
-    className={`border-t border-slate-100 bg-slate-50/50 font-medium ${className}`}
-    {...props}
-  />
-))
-TableFooter.displayName = "TableFooter"
-
-const TableRow = React.forwardRef(({ className, ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={`transition-all duration-200 hover:bg-indigo-50/30 ${className}`}
-    {...props}
-  />
-))
-TableRow.displayName = "TableRow"
-
-const TableHead = React.forwardRef(({ className, ...props }, ref) => (
-  <th
-    ref={ref}
-    className={`h-11 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-500 ${className}`}
-    {...props}
-  />
-))
-TableHead.displayName = "TableHead"
-
-const TableCell = React.forwardRef(({ className, ...props }, ref) => (
-  <td
-    ref={ref}
-    className={`p-4 align-middle text-slate-600 ${className}`}
-    {...props}
-  />
-))
-TableCell.displayName = "TableCell"
-
-const TableCaption = React.forwardRef(({ className, ...props }, ref) => (
-  <caption
-    ref={ref}
-    className={`mt-4 text-sm text-slate-500 ${className}`}
-    {...props}
-  />
-))
-TableCaption.displayName = "TableCaption"
-
-export {
-  Table,
-  TableHeader,
-  TableBody,
-  TableFooter,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableCaption,
-}
+// Export both default and named exports
+export { Table, TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell };
+export default Table;

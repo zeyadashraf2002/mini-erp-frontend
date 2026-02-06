@@ -25,10 +25,10 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="flex h-screen bg-slate-50 font-sans overflow-hidden print:bg-white print:h-auto print:overflow-visible">
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900 text-white z-30 flex items-center justify-between px-4 shadow-md print:hidden">
-         <div className="font-bold text-lg">Mini ERP</div>
-         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 z-30 flex items-center justify-between px-4 shadow-soft print:hidden">
+         <div className="font-bold text-lg text-gray-900">Mini ERP</div>
+         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 hover:bg-gray-100 rounded-lg transition-smooth">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isSidebarOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
             </svg>
          </button>
@@ -43,20 +43,22 @@ export default function DashboardLayout({ children }) {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed md:static inset-y-0 left-0 w-72 bg-slate-900 text-slate-400 flex flex-col shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} print:hidden`}>
-        <div className="p-8 flex items-center gap-4 border-b border-slate-800/50 hidden md:flex mb-4">
-           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">
-             M
+      <aside className={`fixed md:static inset-y-0 left-0 w-72 bg-white border-r border-gray-100 flex flex-col shadow-soft-xl z-40 transform transition-smooth-slow ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} print:hidden`}>
+        <div className="p-6 flex items-center gap-3 border-b border-gray-100 hidden md:flex">
+           <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center text-white font-bold shadow-soft">
+             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+             </svg>
            </div>
            <div>
-             <span className="text-xl font-black text-white tracking-tight block">Mini ERP</span>
-             <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-[2px]">Enterprise</span>
+             <span className="text-lg font-bold text-gray-900 tracking-tight block">Mini ERP</span>
+             <span className="text-xs font-medium text-gray-500">Enterprise System</span>
            </div>
         </div>
         
         {/* Mobile Menu Header */}
-        <div className="p-6 md:hidden bg-slate-800/30 mb-4 pt-20">
-           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Navigation Menu</div>
+        <div className="p-6 md:hidden bg-gray-50 mb-2 pt-20">
+           <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Menu</div>
         </div>
 
         <nav className="flex-1 p-6 space-y-8 overflow-y-auto">
@@ -71,21 +73,21 @@ export default function DashboardLayout({ children }) {
                 onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
                   isActive(`/dashboard/${tenantId}`) 
-                    ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' 
-                    : 'hover:bg-slate-800 hover:text-white'
+                    ? 'bg-sky-50 text-sky-700 font-semibold' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-transform duration-300 group-hover:scale-110 ${isActive(`/dashboard/${tenantId}`) ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-smooth ${isActive(`/dashboard/${tenantId}`) ? 'text-sky-600' : 'text-gray-400 group-hover:text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
-                <span className="font-semibold text-sm">Dashboard</span>
+                <span className="font-medium text-sm">Dashboard</span>
               </Link>
             </div>
           </div>
 
           {/* Finance Section */}
           <div>
-            <div className="px-3 mb-4 text-[11px] font-bold text-slate-500 uppercase tracking-[2px]">
+            <div className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Finance & Accounting
             </div>
             <div className="space-y-1">
@@ -110,14 +112,14 @@ export default function DashboardLayout({ children }) {
                   onClick={() => setIsSidebarOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
                     isItemActive
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
-                      : 'hover:bg-slate-800 hover:text-white'
+                      ? 'bg-sky-50 text-sky-700 font-semibold' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-transform duration-300 group-hover:rotate-6 ${isItemActive ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-smooth ${isItemActive ? 'text-sky-600' : 'text-gray-400 group-hover:text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                   </svg>
-                  <span className="font-semibold text-sm">{item.label}</span>
+                  <span className="font-medium text-sm">{item.label}</span>
                 </Link>
               )})}
 
@@ -127,14 +129,14 @@ export default function DashboardLayout({ children }) {
                 onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
                   pathname.includes('/invoices') 
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
-                    : 'hover:bg-slate-800 hover:text-white'
+                    ? 'bg-sky-50 text-sky-700 font-semibold' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-transform duration-300 group-hover:scale-110 ${pathname.includes('/invoices') ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-smooth ${pathname.includes('/invoices') ? 'text-sky-600' : 'text-gray-400 group-hover:text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span className="font-semibold text-sm">Invoices</span>
+                <span className="font-medium text-sm">Invoices</span>
               </Link>
 
               <Link 
@@ -142,34 +144,34 @@ export default function DashboardLayout({ children }) {
                 onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
                   pathname.includes('/payments') 
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
-                    : 'hover:bg-slate-800 hover:text-white'
+                    ? 'bg-sky-50 text-sky-700 font-semibold' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-transform duration-300 group-hover:scale-110 ${pathname.includes('/payments') ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-smooth ${pathname.includes('/payments') ? 'text-sky-600' : 'text-gray-400 group-hover:text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <span className="font-semibold text-sm">Payments</span>
+                <span className="font-medium text-sm">Payments</span>
               </Link>
             </div>
           </div>
         </nav>
 
-        <div className="p-6 border-t border-slate-800/50 bg-slate-900/40">
+        <div className="p-4 border-t border-gray-100 bg-gray-50">
           <button 
             onClick={handleLogout} 
-            className="flex items-center gap-3 w-full px-4 py-3 text-sm font-bold text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all duration-300 group"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-white hover:text-red-600 transition-smooth group"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 group-hover:text-red-500 transition-smooth" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            Sign Out
+            <span className="font-medium text-sm">Logout</span>
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-slate-50 mt-16 md:mt-0">
+      <main className="flex-1 overflow-y-auto bg-gray-50 mt-16 md:mt-0">
         <div className="max-w-7xl mx-auto p-4 md:p-8">
            {children}
         </div>

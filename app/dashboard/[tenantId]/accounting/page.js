@@ -1,9 +1,9 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 
-export default function AccountingPage() {
+function AccountingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -449,5 +449,18 @@ export default function AccountingPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function AccountingPage() {
+  return (
+    <Suspense fallback={
+      <div className="p-12 text-center text-slate-500 flex flex-col items-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
+        Loading accounting module...
+      </div>
+    }>
+      <AccountingContent />
+    </Suspense>
   );
 }
