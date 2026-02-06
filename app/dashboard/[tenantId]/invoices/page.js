@@ -39,9 +39,9 @@ export default function InvoicesPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h1 className="text-3xl font-bold tracking-tight text-slate-900">Invoices</h1>
-                <Button onClick={() => setShowCreate(!showCreate)}>
+                <Button onClick={() => setShowCreate(!showCreate)} className="w-full sm:w-auto">
                     {showCreate ? 'View Invoices' : 'Create Invoice'}
                 </Button>
             </div>
@@ -161,18 +161,18 @@ function CreateInvoiceForm({ token, onSuccess }) {
                     {error && (
                         <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm">{error}</div>
                     )}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Input label="Invoice Number" name="invoiceNumber" placeholder="INV-001" required />
                         <Input label="Date" name="date" type="date" defaultValue={new Date().toISOString().split('T')[0]} required />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                        <Input label="Customer ID" name="customerId" placeholder="CUST-123" required />
                        <Input label="Customer Name" name="customerName" placeholder="Acme Inc" required />
                     </div>
                     <Input label="Amount" name="amount" type="number" step="0.01" min="0" required />
                     <Input label="Due Date" name="dueDate" type="date" />
                 </CardContent>
-                <div className="p-6 pt-0 flex justify-end">
+                <div className="p-6 pt-4 flex justify-end">
                     <Button type="submit" isLoading={loading}>Generate Invoice</Button>
                 </div>
             </form>

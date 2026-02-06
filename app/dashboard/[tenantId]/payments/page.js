@@ -40,6 +40,7 @@ export default function PaymentsPage() {
     const fetchInvoices = async () => {
         try {
            const res = await api.get('/invoices', token);
+           // Strictly filter out PAID status
            setInvoices(res.data.filter(inv => inv.status !== 'PAID'));
         } catch(error) { 
             console.error(error); 
@@ -48,9 +49,9 @@ export default function PaymentsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h1 className="text-3xl font-bold tracking-tight text-slate-900">Payments</h1>
-                <Button onClick={() => setShowCreate(!showCreate)}>
+                <Button onClick={() => setShowCreate(!showCreate)} className="w-full sm:w-auto">
                     {showCreate ? 'View Payments' : 'Record Payment'}
                 </Button>
             </div>
@@ -174,14 +175,14 @@ function CreatePaymentForm({ token, invoices, onSuccess }) {
                          </select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Input label="Date" name="date" type="date" defaultValue={new Date().toISOString().split('T')[0]} required />
                         <Input label="Payment Method" name="method" placeholder="Bank Transfer, Cash..." />
                     </div>
                     
                     <Input label="Amount Received" name="amount" type="number" step="0.01" min="0" required />
                 </CardContent>
-                <div className="p-6 pt-0 flex justify-end">
+                <div className="p-6 pt-4 flex justify-end">
                     <Button type="submit" isLoading={loading}>Record Payment</Button>
                 </div>
             </form>

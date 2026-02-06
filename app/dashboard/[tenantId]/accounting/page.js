@@ -132,6 +132,14 @@ function AccountingContent() {
           return;
       }
 
+      // Check for duplicate accounts
+      const accountIds = journalForm.lines.map(l => l.accountId).filter(Boolean);
+      const uniqueAccountIds = new Set(accountIds);
+      if (accountIds.length !== uniqueAccountIds.size) {
+        toast.error("Duplicate account found! Each account can only appear once per entry.");
+        return;
+      }
+
       try {
           const payload = {
             ...journalForm,
