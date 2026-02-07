@@ -459,17 +459,32 @@ function AccountingContent() {
         {/* Trial Balance Tab */}
         {!loading && activeTab === 'reports' && (
              <div className="p-6">
-                 <div className="flex justify-between items-center mb-6 print:hidden">
+                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 print:hidden">
                     <h2 className="text-xl font-bold text-slate-800">Trial Balance</h2>
-                    <div className="flex gap-4">
-                        <input 
-                          type="text" 
-                          placeholder="Search..." 
-                          value={searchTerm}
-                          onChange={e => setSearchTerm(e.target.value)}
-                          className="p-2 border border-slate-300 rounded-lg text-sm text-slate-900"
-                        />
-                        <button className="px-4 py-2 bg-slate-800 text-white text-sm rounded hover:bg-slate-700" onClick={() => window.print()}>Print Report</button>
+                    <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <div className="relative w-full sm:w-64">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </span>
+                            <input 
+                              type="text" 
+                              placeholder="Search..." 
+                              value={searchTerm}
+                              onChange={e => setSearchTerm(e.target.value)}
+                              className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                            />
+                        </div>
+                        <button 
+                            className="px-6 py-2 bg-slate-800 text-white text-sm font-medium rounded-lg hover:bg-slate-700 transition-all flex items-center justify-center gap-2 shadow-sm"
+                            onClick={() => window.print()}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2-2H7a2 2 0 00-2 2v4m14 0h2" />
+                            </svg>
+                            Print Report
+                        </button>
                     </div>
                  </div>
                  
